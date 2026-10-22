@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { createBff, safeReturnTo, type BffOptions } from "./bff.js";
+import { createBff, isLocalUrl, safeReturnTo, type BffOptions } from "./bff.js";
 import { createTokenVerifier } from "./verify.js";
 import { startMockOidc } from "./testing.js";
 
-const SITE = "http://site.test";
+const SITE = "http://localhost:3999";
 let mocks: { close(): Promise<void> }[] = [];
 afterEach(async () => { await Promise.all(mocks.map((m) => m.close())); mocks = []; });
 
@@ -116,5 +116,18 @@ describe("fetchUserInfo", () => {
       expect(await fetchUserInfo(op.issuer, await op.accessToken())).toEqual({ sub: "u9", name: "Negen", email: "n@example.test", locale: "nl" });
       expect(await fetchUserInfo(op.issuer, "nep")).toBeNull();
     } finally { await op.close(); }
+  });
+});
+
+describe("lokaal zonder https", () => {
+  it("staat onveilige cookies en http alleen toe op localhost", () => {
+    expect(isLocalUrl("http://localhost:3000/auth/callback")).toBe(true);
+    expect(isLocalUrl("http://admin.site.localhost")).toBe(true);
+    expect(isLocalUrl("http://127.0.0.1:8080")).toBe(true);
+    expect(isLocalUrl("https://www.example.com")).toBe(false);
+    expect(isLocalUrl("http://localhost.evil.com")).toBe(false);
+    const base = { issuer: "http://localhost:8080", clientId: "c", sessionSecret: "s".repeat(40), postLogoutRedirectUri: "http://localhost:3000/", insecureDevelopment: true };
+    expect(() => createBff({ ...base, redirectUri: "https://www.example.com/auth/callback" })).toThrow(/localhost/);
+    expect(() => createBff({ ...base, redirectUri: "http://localhost:3000/auth/callback" })).not.toThrow();
   });
 });

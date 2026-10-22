@@ -23,13 +23,26 @@ export interface BffOptions {
   cookieName?: string;
   /** Hoe lang iemand ingelogd blijft zonder activiteit (de refresh token verlengt). Standaard 30 dagen. */
   sessionMaxAgeSeconds?: number;
-  /** Alleen voor tests en lokaal: HTTP-uitgever toestaan en cookies zonder Secure. */
+  /**
+   * Alleen voor tests en lokaal: HTTP-uitgever toestaan en cookies zonder Secure. Werkt alleen als
+   * de site en de uitgever op localhost draaien; anders weigert createBff te starten.
+   */
   insecureDevelopment?: boolean;
 }
 
 export type SessionResult = { session: Session | null; setCookie?: string };
 
 const ORG_CLAIM = "urn:zitadel:iam:user:resourceowner:id";
+
+/** Draait deze URL op de eigen machine (localhost, *.localhost of 127.0.0.1)? */
+export function isLocalUrl(value: string): boolean {
+  try {
+    const host = new URL(value).hostname;
+    return host === "localhost" || host.endsWith(".localhost") || host === "127.0.0.1" || host === "[::1]";
+  } catch {
+    return false;
+  }
+}
 
 /** Alleen interne paden als bestemming na inloggen: voorkomt open redirects. */
 export function safeReturnTo(value: string | null | undefined): string {
@@ -38,6 +51,9 @@ export function safeReturnTo(value: string | null | undefined): string {
 }
 
 export function createBff(options: BffOptions) {
+  if (options.insecureDevelopment && !(isLocalUrl(options.redirectUri) && isLocalUrl(options.issuer))) {
+    throw new Error("insecureDevelopment mag alleen met een site en uitgever op localhost");
+  }
   const key = sessionKey(options.sessionSecret);
   const secure = !options.insecureDevelopment;
   const name = options.cookieName ?? "session";
