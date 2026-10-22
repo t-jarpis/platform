@@ -1,5 +1,5 @@
 import * as oidc from "openid-client";
-import { readCookie, seal, serializeCookie, sessionKey, unseal, type Session } from "./session.js";
+import { readChunked, readCookie, seal, serializeChunked, serializeCookie, sessionKey, unseal, type Session } from "./session.js";
 
 /**
  * Inloggen via Zitadel volgens het BFF-patroon: de server doet de OIDC-flow (authorization code + PKCE),
@@ -30,7 +30,8 @@ export interface BffOptions {
   insecureDevelopment?: boolean;
 }
 
-export type SessionResult = { session: Session | null; setCookie?: string };
+/** `setCookies`: zet ze allemaal op het antwoord (de sessie kan over meerdere cookies verdeeld zijn). */
+export type SessionResult = { session: Session | null; setCookies?: string[] };
 
 const ORG_CLAIM = "urn:zitadel:iam:user:resourceowner:id";
 
@@ -75,6 +76,8 @@ export function createBff(options: BffOptions) {
   ].join(" ");
 
   const clear = (n: string) => serializeCookie({ name: n, value: "", maxAge: 0, secure });
+  const clearSession = () => serializeChunked({ name, value: "", maxAge: 0, secure });
+  const writeSession = async (s: Session) => serializeChunked({ name, value: await seal(s, key, maxAge), maxAge, secure });
 
   async function toSession(tokens: oidc.TokenEndpointResponse & oidc.TokenEndpointResponseHelpers, previous?: Session): Promise<Session> {
     const claims = tokens.claims();
@@ -132,25 +135,25 @@ export function createBff(options: BffOptions) {
         return new Response("Dit account heeft hier geen toegang.", { status: 403 });
       }
       const headers = new Headers({ location: tx.returnTo, "cache-control": "no-store" });
-      headers.append("set-cookie", serializeCookie({ name, value: await seal(session, key, maxAge), maxAge, secure }));
+      for (const c of await writeSession(session)) headers.append("set-cookie", c);
       headers.append("set-cookie", clear(txName));
       return new Response(null, { status: 302, headers });
     },
 
     /** Leest de sessie en ververst het access token als het bijna verloopt. */
     async session(cookieHeader: string | null | undefined): Promise<SessionResult> {
-      const raw = readCookie(cookieHeader, name, secure);
+      const raw = readChunked(cookieHeader, name, secure);
       if (!raw) return { session: null };
       const session = await unseal<Session>(raw, key);
-      if (!session) return { session: null, setCookie: clear(name) };
+      if (!session) return { session: null, setCookies: clearSession() };
       if (session.expiresAt - Date.now() > 60_000) return { session };
-      if (!session.refreshToken) return { session: null, setCookie: clear(name) };
+      if (!session.refreshToken) return { session: null, setCookies: clearSession() };
       try {
         const tokens = await oidc.refreshTokenGrant(await configuration(), session.refreshToken);
         const next = await toSession(tokens, session);
-        return { session: next, setCookie: serializeCookie({ name, value: await seal(next, key, maxAge), maxAge, secure }) };
+        return { session: next, setCookies: await writeSession(next) };
       } catch {
-        return { session: null, setCookie: clear(name) };
+        return { session: null, setCookies: clearSession() };
       }
     },
 
@@ -158,7 +161,7 @@ export function createBff(options: BffOptions) {
     async logout(request: Request): Promise<Response> {
       const { session } = await this.session(request.headers.get("cookie"));
       const headers = new Headers({ "cache-control": "no-store" });
-      headers.append("set-cookie", clear(name));
+      for (const c of clearSession()) headers.append("set-cookie", c);
       let location = options.postLogoutRedirectUri;
       if (session?.idToken) {
         location = oidc.buildEndSessionUrl(await configuration(), { id_token_hint: session.idToken, post_logout_redirect_uri: options.postLogoutRedirectUri }).href;

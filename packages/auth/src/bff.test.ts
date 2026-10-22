@@ -23,8 +23,13 @@ async function signIn(bff: ReturnType<typeof createBff>, returnTo = "/nl-nl/acco
   const tx = start.headers.get("set-cookie")!.split(";")[0]!;
   const authorize = await fetch(start.headers.get("location")!, { redirect: "manual" });
   const done = await bff.callback(new Request(authorize.headers.get("location")!, { headers: { cookie: tx } }));
-  const cookie = done.headers.getSetCookie().find((c) => c.startsWith("session="))?.split(";")[0] ?? "";
+  const cookie = toCookieHeader(done.headers.getSetCookie());
   return { start, authorize, done, cookie };
+}
+
+/** Wat de browser terugstuurt: alle niet-gewiste sessiecookies (ook de delen session.1, session.2). */
+function toCookieHeader(setCookies: string[] = []) {
+  return setCookies.filter((c) => /^session(\.\d)?=/.test(c) && !c.includes("Max-Age=0")).map((c) => c.split(";")[0]).join("; ");
 }
 
 describe("inloggen via de BFF", () => {
@@ -54,12 +59,12 @@ describe("inloggen via de BFF", () => {
     const { cookie } = await signIn(bff);
     const refreshed = await bff.session(cookie);
     expect(refreshed.session?.subject).toBe("u-1");
-    expect(refreshed.setCookie).toMatch(/^session=/);
+    expect(toCookieHeader(refreshed.setCookies)).toMatch(/^session=/);
     expect(mock.state.refreshes).toBe(1);
     mock.state.revoked = true;
-    const gone = await bff.session(refreshed.setCookie!.split(";")[0]);
+    const gone = await bff.session(toCookieHeader(refreshed.setCookies));
     expect(gone.session).toBeNull();
-    expect(gone.setCookie).toMatch(/Max-Age=0/);
+    expect(gone.setCookies?.every((c) => c.includes("Max-Age=0"))).toBe(true);
   });
 
   it("weigert een gebruiker van een andere organisatie", async () => {
@@ -129,5 +134,19 @@ describe("lokaal zonder https", () => {
     const base = { issuer: "http://localhost:8080", clientId: "c", sessionSecret: "s".repeat(40), postLogoutRedirectUri: "http://localhost:3000/", insecureDevelopment: true };
     expect(() => createBff({ ...base, redirectUri: "https://www.example.com/auth/callback" })).toThrow(/localhost/);
     expect(() => createBff({ ...base, redirectUri: "http://localhost:3000/auth/callback" })).not.toThrow();
+  });
+});
+
+describe("grote sessies", () => {
+  it("verdeelt een sessie over meerdere cookies onder de 4 KB en leest hem weer terug", async () => {
+    const { readChunked, serializeChunked } = await import("./session.js");
+    const value = "x".repeat(9000);
+    const set = serializeChunked({ name: "s", value, maxAge: 60, secure: true });
+    expect(set).toHaveLength(4);
+    expect(set.every((c) => c.length < 4096)).toBe(true);
+    expect(set[3]).toMatch(/^__Host-s\.3=; .*Max-Age=0/);
+    const header = set.filter((c) => !c.includes("Max-Age=0")).map((c) => c.split(";")[0]).join("; ");
+    expect(readChunked(header, "s", true)).toBe(value);
+    expect(() => serializeChunked({ name: "s", value: "x".repeat(20000), maxAge: 60, secure: true })).toThrow(/te groot/);
   });
 });

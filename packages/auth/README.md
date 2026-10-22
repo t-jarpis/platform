@@ -15,9 +15,10 @@ export const auth = createBff({
 });
 
 // Route handlers: GET /auth/login → auth.login(req), GET /auth/callback → auth.callback(req), GET /auth/logout → auth.logout(req)
-const { session, setCookie } = await auth.session(request.headers.get("cookie"));
+const { session, setCookies } = await auth.session(request.headers.get("cookie"));
+// Zet elke cookie uit setCookies op het antwoord: een grote sessie is over meerdere cookies verdeeld.
 ```
-De browser krijgt alleen een versleutelde `HttpOnly`-cookie (A256GCM, `__Host-`-prefix). Tokens zijn nooit leesbaar in JavaScript. Zonder activiteit verloopt de sessie na 30 dagen; het access token wordt ververst als het bijna verloopt.
+De browser krijgt alleen een versleutelde `HttpOnly`-cookie (A256GCM, `__Host-`-prefix). Past de sessie niet in 4 KB (echte Zitadel-tokens), dan wordt hij verdeeld over `naam`, `naam.1` tot `naam.3`. Tokens zijn nooit leesbaar in JavaScript. Zonder activiteit verloopt de sessie na 30 dagen; het access token wordt ververst als het bijna verloopt.
 
 ## API
 ```ts

@@ -49,3 +49,35 @@ export function readCookie(header: string | null | undefined, name: string, secu
   }
   return null;
 }
+
+/**
+ * Browsers bewaren een cookie van hooguit 4096 bytes. Met tokens van Zitadel wordt een sessie daar
+ * makkelijk groter dan; dan verdelen we hem over `naam`, `naam.1`, `naam.2` en `naam.3`.
+ */
+export const COOKIE_CHUNK = 3600;
+export const MAX_CHUNKS = 4;
+const chunkName = (name: string, i: number) => (i === 0 ? name : `${name}.${i}`);
+
+/** Set-Cookie-headers voor een (mogelijk grote) waarde; overgebleven delen van eerder worden gewist. */
+export function serializeChunked({ name, value, maxAge, secure }: CookieOptions): string[] {
+  const parts = value ? value.match(new RegExp(`.{1,${COOKIE_CHUNK}}`, "gs")) ?? [] : [];
+  if (parts.length > MAX_CHUNKS) throw new Error("Sessie is te groot voor cookies");
+  return Array.from({ length: MAX_CHUNKS }, (_, i) => {
+    const part = parts[i];
+    return part !== undefined
+      ? serializeCookie({ name: chunkName(name, i), value: part, maxAge, secure })
+      : serializeCookie({ name: chunkName(name, i), value: "", maxAge: 0, secure });
+  });
+}
+
+export function readChunked(header: string | null | undefined, name: string, secure: boolean): string | null {
+  const first = readCookie(header, name, secure);
+  if (!first) return null;
+  let value = first;
+  for (let i = 1; i < MAX_CHUNKS; i++) {
+    const part = readCookie(header, chunkName(name, i), secure);
+    if (!part) break;
+    value += part;
+  }
+  return value;
+}
