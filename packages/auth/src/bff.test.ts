@@ -95,3 +95,26 @@ describe("safeReturnTo", () => {
     expect(safeReturnTo(null)).toBe("/");
   });
 });
+
+describe("nep-Zitadel", () => {
+  it("geeft userinfo voor uitgegeven tokens en tokens voor andere gebruikers", async () => {
+    const op = await startMockOidc({ clientId: "c", audience: "p", user: { sub: "u1", name: "Een" } });
+    try {
+      const other = await op.accessToken(60, { sub: "u2", name: "Twee", organizationId: "org-2" });
+      const info = await fetch(`${op.issuer}/oidc/v1/userinfo`, { headers: { authorization: `Bearer ${other}` } });
+      expect(await info.json()).toMatchObject({ sub: "u2", name: "Twee" });
+      expect((await fetch(`${op.issuer}/oidc/v1/userinfo`, { headers: { authorization: "Bearer nep" } })).status).toBe(401);
+    } finally { await op.close(); }
+  });
+});
+
+describe("fetchUserInfo", () => {
+  it("haalt het profiel op en geeft null bij een ongeldig token", async () => {
+    const { fetchUserInfo } = await import("./verify.js");
+    const op = await startMockOidc({ clientId: "c", user: { sub: "u9", name: "Negen", email: "n@example.test", locale: "nl" } });
+    try {
+      expect(await fetchUserInfo(op.issuer, await op.accessToken())).toEqual({ sub: "u9", name: "Negen", email: "n@example.test", locale: "nl" });
+      expect(await fetchUserInfo(op.issuer, "nep")).toBeNull();
+    } finally { await op.close(); }
+  });
+});

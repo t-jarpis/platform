@@ -27,5 +27,8 @@ const identity = await verify(bearerToken(req.headers.authorization) ?? "");
 ```
 Het token zegt alleen *wie* iemand is; *wat* iemand mag, bepaalt de site uit de eigen database.
 
+## Profiel ophalen
+`fetchUserInfo(issuer, accessToken)` haalt naam, e-mail en taal op bij Zitadel, bijvoorbeeld om een gebruiker bij de eerste aanvraag aan te maken. Geeft `null` als Zitadel niet antwoordt; de API werkt dan gewoon door.
+
 ## Tests
-`import { startMockOidc } from "@t-jarpis/auth/testing"` start een nep-Zitadel met discovery, PKCE, refresh en uitloggen.
+`import { startMockOidc } from "@t-jarpis/auth/testing"` start een nep-Zitadel met discovery, PKCE, refresh, userinfo en uitloggen. Met `accessToken(ttl, user)` maak je tokens voor andere gebruikers of organisaties.

@@ -70,3 +70,32 @@ export function bearerToken(header: string | undefined | null): string | null {
   const match = /^Bearer\s+(\S+)$/i.exec(header.trim());
   return match?.[1] ?? null;
 }
+
+/** Profiel uit Zitadel (userinfo). Alleen velden die een site nodig kan hebben; alles is optioneel. */
+export interface UserInfo { sub: string; name?: string; email?: string; emailVerified?: boolean; locale?: string }
+
+/**
+ * Haalt het profiel op bij Zitadel met het access token van de gebruiker zelf. Bedoeld voor
+ * just-in-time aanmaken van een gebruiker; geeft `null` als Zitadel niet (op tijd) antwoordt.
+ */
+export async function fetchUserInfo(issuer: string, accessToken: string, timeoutMs = 3000): Promise<UserInfo | null> {
+  try {
+    const res = await fetch(`${issuer.replace(/\/$/, "")}/oidc/v1/userinfo`, {
+      headers: { authorization: `Bearer ${accessToken}`, accept: "application/json" },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    if (!res.ok) return null;
+    const body = (await res.json()) as Record<string, unknown>;
+    if (typeof body.sub !== "string") return null;
+    const str = (k: string) => (typeof body[k] === "string" ? (body[k] as string) : undefined);
+    const info: UserInfo = { sub: body.sub };
+    const name = str("name"), email = str("email"), locale = str("locale");
+    if (name) info.name = name;
+    if (email) info.email = email;
+    if (locale) info.locale = locale;
+    if (typeof body.email_verified === "boolean") info.emailVerified = body.email_verified;
+    return info;
+  } catch {
+    return null;
+  }
+}

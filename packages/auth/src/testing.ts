@@ -6,7 +6,7 @@ import { exportJWK, generateKeyPair, SignJWT, type CryptoKey } from "jose";
  * Nep-Zitadel voor tests: discovery, JWKS, authorize (keurt direct goed), token (code + PKCE, refresh)
  * en end_session. Niet voor productie.
  */
-export interface MockUser { sub: string; name?: string; email?: string; organizationId?: string }
+export interface MockUser { sub: string; name?: string; email?: string; organizationId?: string; locale?: string }
 
 export async function startMockOidc(opts: { clientId: string; clientSecret?: string; audience?: string; user: MockUser; accessTokenTtl?: number }) {
   const { publicKey, privateKey } = await generateKeyPair("RS256");
@@ -16,9 +16,12 @@ export async function startMockOidc(opts: { clientId: string; clientSecret?: str
   const state = { user: opts.user, logins: 0, refreshes: 0, revoked: false };
   let issuer = "";
 
-  const sign = (claims: Record<string, unknown>, aud: string | string[], ttl: number, key: CryptoKey = privateKey) =>
+  const issued = new Map<string, MockUser>();
+  const sign = (claims: Record<string, unknown>, aud: string | string[], ttl: number, user: MockUser = state.user, key: CryptoKey = privateKey) =>
     new SignJWT(claims).setProtectedHeader({ alg: "RS256", kid: "mock-1" }).setIssuer(issuer).setAudience(aud)
-      .setSubject(state.user.sub).setIssuedAt().setExpirationTime(Math.floor(Date.now() / 1000) + ttl).sign(key);
+      .setSubject(user.sub).setIssuedAt().setExpirationTime(Math.floor(Date.now() / 1000) + ttl).sign(key);
+
+  const remember = (token: string, user: MockUser) => { issued.set(token, user); return token; };
 
   async function tokens(scope: string) {
     const org = state.user.organizationId ? { "urn:zitadel:iam:user:resourceowner:id": state.user.organizationId } : {};
@@ -27,7 +30,7 @@ export async function startMockOidc(opts: { clientId: string; clientSecret?: str
     if (scope.includes("offline_access")) refreshTokens.add(refresh);
     return {
       token_type: "Bearer", expires_in: ttl,
-      access_token: await sign({ ...org }, opts.audience ?? opts.clientId, ttl),
+      access_token: await remember(await sign({ ...org }, opts.audience ?? opts.clientId, ttl), state.user),
       id_token: await sign({ ...org, name: state.user.name, email: state.user.email }, opts.clientId, 3600),
       ...(scope.includes("offline_access") ? { refresh_token: refresh } : {}),
     };
@@ -38,7 +41,7 @@ export async function startMockOidc(opts: { clientId: string; clientSecret?: str
     const json = (status: number, body: unknown) => { res.writeHead(status, { "content-type": "application/json" }); res.end(JSON.stringify(body)); };
     if (url.pathname === "/.well-known/openid-configuration") return json(200, {
       issuer, authorization_endpoint: `${issuer}/oauth/v2/authorize`, token_endpoint: `${issuer}/oauth/v2/token`,
-      jwks_uri: `${issuer}/oauth/v2/keys`, end_session_endpoint: `${issuer}/oidc/v1/end_session`,
+      jwks_uri: `${issuer}/oauth/v2/keys`, userinfo_endpoint: `${issuer}/oidc/v1/userinfo`, end_session_endpoint: `${issuer}/oidc/v1/end_session`,
       response_types_supported: ["code"], subject_types_supported: ["public"], id_token_signing_alg_values_supported: ["RS256"],
       code_challenge_methods_supported: ["S256"], token_endpoint_auth_methods_supported: ["client_secret_basic", "none"],
     });
@@ -74,6 +77,11 @@ export async function startMockOidc(opts: { clientId: string; clientSecret?: str
       }
       return json(400, { error: "unsupported_grant_type" });
     }
+    if (url.pathname === "/oidc/v1/userinfo") {
+      const user = issued.get((req.headers.authorization ?? "").replace(/^Bearer /, ""));
+      if (!user) return json(401, { error: "invalid_token" });
+      return json(200, { sub: user.sub, name: user.name, email: user.email, locale: user.locale });
+    }
     if (url.pathname === "/oidc/v1/end_session") { res.writeHead(302, { location: url.searchParams.get("post_logout_redirect_uri") ?? "/" }); return res.end(); }
     json(404, { error: "not_found" });
   });
@@ -83,8 +91,9 @@ export async function startMockOidc(opts: { clientId: string; clientSecret?: str
 
   return {
     issuer, state,
-    /** Een geldig access token zoals de API het zou krijgen. */
-    accessToken: (ttl = 300) => sign(state.user.organizationId ? { "urn:zitadel:iam:user:resourceowner:id": state.user.organizationId } : {}, opts.audience ?? opts.clientId, ttl),
+    /** Een geldig access token zoals de API het zou krijgen; standaard voor de huidige gebruiker. */
+    accessToken: async (ttl = 300, user: MockUser = state.user) =>
+      remember(await sign(user.organizationId ? { "urn:zitadel:iam:user:resourceowner:id": user.organizationId } : {}, opts.audience ?? opts.clientId, ttl, user), user),
     close: () => new Promise<void>((r) => server.close(() => r())),
   };
 }
