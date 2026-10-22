@@ -1,20 +1,43 @@
 {
   "name": "@t-jarpis/auth",
   "version": "0.1.0",
-  "description": "Inloggen via Zitadel (OIDC): tokencontrole voor de API. BFF-helpers voor Next.js volgen.",
+  "description": "Inloggen via Zitadel (OIDC): BFF-flow met versleutelde sessiecookie, en tokencontrole voor de API.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
-  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run"
   },
-  "dependencies": { "jose": "^6.0.0" },
-  "devDependencies": { "@t-jarpis/config": "workspace:*", "@types/node": "^22.0.0" },
-  "publishConfig": { "registry": "https://npm.pkg.github.com" },
-  "repository": { "type": "git", "url": "https://github.com/t-jarpis/platform.git", "directory": "packages/auth" }
+  "dependencies": {
+    "jose": "^6.0.0",
+    "openid-client": "^6.8.8"
+  },
+  "devDependencies": {
+    "@t-jarpis/config": "workspace:*",
+    "@types/node": "^22.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/t-jarpis/platform.git",
+    "directory": "packages/auth"
+  }
 }

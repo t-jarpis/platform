@@ -5,7 +5,7 @@ Gedeelde bouwstenen voor alle sites van t-jarpis. Elke site heeft een eigen repo
 | Pakket | Inhoud | Status |
 | --- | --- | --- |
 | `@t-jarpis/config` | TypeScript- en ESLint-instellingen | 0.1 |
-| `@t-jarpis/auth` | Controle van Zitadel-access tokens. BFF-helpers voor Next.js volgen | 0.1 |
+| `@t-jarpis/auth` | Inloggen via Zitadel: BFF met versleutelde sessie, tokencontrole voor de API, nep-Zitadel voor tests | 0.2 |
 | `@t-jarpis/access` | Rollen, permissies en auditlog | gepland |
 | `terraform/` | Modules voor Azure-site, Cloudflare-zone en Zitadel-organisatie | gepland |
 

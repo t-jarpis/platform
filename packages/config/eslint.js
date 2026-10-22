@@ -12,4 +12,9 @@ export default tseslint.config(
       "no-console": ["warn", { allow: ["warn", "error"] }],
     },
   },
+  {
+    // In tests mag een non-null assertion: een fout daar is een falende test, geen productiefout.
+    files: ["**/*.test.ts", "**/*.test.tsx", "**/test/**"],
+    rules: { "@typescript-eslint/no-non-null-assertion": "off" },
+  },
 );
