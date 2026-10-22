@@ -1,5 +1,11 @@
 # @t-jarpis/auth
 
+## 0.3.0
+
+### Minor Changes
+
+- f0e2a82: Sessies groter dan één cookie worden verdeeld over maximaal vier cookies (echte Zitadel-tokens passen niet in 4 KB). Let op: `SessionResult.setCookie` is nu `setCookies: string[]`; zet ze allemaal op het antwoord.
+
 ## 0.2.0
 
 ### Minor Changes
