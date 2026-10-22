@@ -1,0 +1,17 @@
+{
+  "name": "@t-jarpis/config",
+  "version": "0.1.0",
+  "description": "Gedeelde TypeScript- en lintinstellingen voor alle sites.",
+  "type": "module",
+  "exports": {
+    "./eslint": "./eslint.js",
+    "./tsconfig/base.json": "./tsconfig/base.json",
+    "./tsconfig/node.json": "./tsconfig/node.json",
+    "./tsconfig/nextjs.json": "./tsconfig/nextjs.json"
+  },
+  "files": ["eslint.js", "tsconfig"],
+  "scripts": { "lint": "eslint ." },
+  "peerDependencies": { "@eslint/js": "^9", "eslint": "^9", "typescript-eslint": "^8" },
+  "publishConfig": { "registry": "https://npm.pkg.github.com" },
+  "repository": { "type": "git", "url": "https://github.com/t-jarpis/platform.git", "directory": "packages/config" }
+}
