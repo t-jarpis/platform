@@ -1,7 +1,28 @@
 {
   "$comment": "Het platform weet niets van sites. Deze lijst groeit met elke nieuwe site.",
-  "forbiddenScopes": ["@kleurhoek"],
-  "forbiddenTerms": ["kleurhoek", "kleurplaat", "kleurplaten", "coloring page", "plate", "plaat", "platen", "feestdag"],
-  "scan": ["packages"],
-  "ignore": ["node_modules", "dist", ".turbo", "coverage", "CHANGELOG.md"]
+  "forbiddenScopes": [
+    "@kleurhoek",
+    "@denkhoek"
+  ],
+  "forbiddenTerms": [
+    "kleurhoek",
+    "denkhoek",
+    "kleurplaat",
+    "kleurplaten",
+    "coloring page",
+    "plate",
+    "plaat",
+    "platen",
+    "feestdag"
+  ],
+  "scan": [
+    "packages"
+  ],
+  "ignore": [
+    "node_modules",
+    "dist",
+    ".turbo",
+    "coverage",
+    "CHANGELOG.md"
+  ]
 }
