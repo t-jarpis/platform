@@ -6,6 +6,7 @@ Gedeelde bouwstenen voor alle sites van t-jarpis. Elke site heeft een eigen repo
 | --- | --- | --- |
 | `@t-jarpis/config` | TypeScript- en ESLint-instellingen | 0.1 |
 | `@t-jarpis/auth` | Inloggen via Zitadel: BFF met versleutelde sessie, tokencontrole voor de API, nep-Zitadel voor tests | 0.2 |
+| `@t-jarpis/puzzles` | Puzzelgeneratoren voor de server: sudoku met beoordeling, doolhoven, seeds | 0.1 (nieuw) |
 | `@t-jarpis/access` | Rollen, permissies en auditlog | gepland |
 | `terraform/` | Modules voor Azure-site, Cloudflare-zone en Zitadel-organisatie | gepland |
 

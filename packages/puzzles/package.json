@@ -1,0 +1,34 @@
+{
+  "name": "@t-jarpis/puzzles",
+  "version": "0.0.0",
+  "description": "Puzzelgeneratoren en -oplossers voor de server (sudoku, doolhof), deterministisch vanuit een seed.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@t-jarpis/config": "workspace:*"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/t-jarpis/platform.git",
+    "directory": "packages/puzzles"
+  }
+}

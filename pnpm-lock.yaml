@@ -58,6 +58,12 @@ importers:
         specifier: ^8
         version: 8.72.0(eslint@9.39.5)(typescript@5.9.3)
 
+  packages/puzzles:
+    devDependencies:
+      '@t-jarpis/config':
+        specifier: workspace:*
+        version: link:../config
+
 packages:
 
   '@babel/runtime@7.29.10':
