@@ -3,7 +3,7 @@
 Puzzelgeneratoren en -oplossers voor de server: sudoku (4×4, 6×6, 9×9) en doolhoven. Alles is deterministisch: dezelfde seed geeft altijd dezelfde puzzel, op elke machine.
 
 ## Alleen op de server
-De generatoren draaien op de server; de site stuurt alleen de puzzel (gegeven cijfers, muren) naar de browser, niet de generator en niet vooraf de oplossing. Het pakket is puur TypeScript zonder Node-API's (het bouwt tegen `ES2023` zonder `@types/node`), dus het werkt ook in een edge- of worker-omgeving. Alleen `conflicts` en `validateSudokuEntry` zijn bedoeld om later eventueel ook in de browser te draaien: die kennen alleen de spelregels.
+De generatoren draaien op de server; de generator gaat nooit naar de browser. Of een site de oplossing met de puzzel meestuurt (zodat de browser zonder serververzoek kan controleren), kiest de site zelf. Het pakket is puur TypeScript zonder Node-API's (het bouwt tegen `ES2023` zonder `@types/node`), dus het werkt ook in een edge- of worker-omgeving. Alleen `conflicts` en `validateSudokuEntry` zijn bedoeld om later eventueel ook in de browser te draaien: die kennen alleen de spelregels.
 
 ## Seeds
 ```ts
