@@ -1,6 +1,6 @@
 {
   "name": "@t-jarpis/releases",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Releasenotes per omgeving: de draaiende versie vastleggen bij het opstarten, met de commits sinds de vorige en de trailer Release-note.",
   "type": "module",
   "main": "./dist/index.js",

@@ -1,6 +1,6 @@
 {
   "name": "@t-jarpis/analytics",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Bezoekersanalyse zonder cookies: events opslaan, per dag optellen en uitlezen, met privacy voorop. Subpath /web voor de website.",
   "type": "module",
   "main": "./dist/index.js",
