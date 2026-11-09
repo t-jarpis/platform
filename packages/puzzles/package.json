@@ -1,7 +1,7 @@
 {
   "name": "@t-jarpis/puzzles",
   "version": "0.0.0",
-  "description": "Puzzelgeneratoren en -oplossers voor de server (sudoku, doolhof), deterministisch vanuit een seed.",
+  "description": "Puzzelgeneratoren en -oplossers voor de server (sudoku, doolhof, woordzoeker, speurpuzzel, rekenpuzzels, nonogram, binaire puzzel), deterministisch vanuit een seed.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

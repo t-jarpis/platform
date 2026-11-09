@@ -18,3 +18,4 @@ ADR 0001 zegt dat code pas naar het platform komt als een tweede site hem nodig 
 ## Gevolgen
 - Sites die puzzels tonen, nemen dit pakket op als tarball (ADR 0002).
 - Nieuwe puzzelsoorten komen in hetzelfde pakket, elk met eigen tests en vaste uitkomsten.
+- Aangevuld door [ADR 0005](0005-meer-puzzelsoorten.md): woordzoeker, speurpuzzel, rekenpuzzels, nonogram en binaire puzzel.
