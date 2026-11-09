@@ -1,0 +1,109 @@
+/* @t-jarpis/admin-ui: layout en componenten voor admin panels.
+   Leest alleen CSS-variabelen die de site levert (zie REQUIRED_TOKENS in src/tokens.ts en de README);
+   geen eigen kleuren, maten of lettertypen. --sw (kleur van een reeks) en --heat (0–1) zet het pakket zelf. */
+
+/* ---------- Layout ---------- */
+.ui-shell { display: grid; grid-template-columns: var(--sidebar-admin) minmax(0, 1fr); min-height: 100vh; background: var(--color-bg); color: var(--color-text); }
+.ui-main { padding: var(--space-8) max(var(--space-4), 3vw); display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
+.ui-main > * { min-width: 0; }
+.ui-main h1 { margin: 0; font: var(--font-display-weight) 28px/1.15 var(--font-display); }
+.ui-main h2 { margin: 0; font: 800 17px/1.3 var(--font-sans); }
+.ui-muted { margin: var(--space-1) 0 0; color: var(--color-text-muted); }
+.ui-page-head, .ui-panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--space-3); }
+.ui-page-head > div:first-child, .ui-panel-head > div:first-child { flex: 1 1 16em; min-width: 0; }
+.ui-page-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); max-width: 100%; }
+.ui-panel { background: var(--color-surface); border: var(--border-thin) solid var(--color-border); border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: var(--space-4); overflow-x: auto; display: flex; flex-direction: column; gap: var(--space-3); }
+.ui-panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: var(--space-4); }
+.ui-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: var(--space-3); }
+.ui-visually-hidden { position: absolute; inset-block-start: 0; inset-inline-start: 0; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- Tabel ---------- */
+.ui-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 15px; }
+.ui-table th, .ui-table td { text-align: start; padding: var(--space-3); border-bottom: var(--border-thin) solid var(--color-border); vertical-align: middle; }
+.ui-table tr:last-child td { border-bottom: 0; }
+.ui-table th { font: 700 13px/1.3 var(--font-sans); text-transform: uppercase; letter-spacing: .08em; color: var(--color-text-muted); }
+.ui-table .num { text-align: end; }
+
+/* ---------- Zijmenu (SideNav, NavLink) ---------- */
+.ui-side { background: var(--color-surface); border-inline-end: var(--border-thin) solid var(--color-border); padding: var(--space-5) var(--space-3); display: flex; flex-direction: column; gap: 2px; }
+.ui-side-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.ui-side-brand { padding: 0 var(--space-3) var(--space-4); }
+.ui-side-toggle { display: none; align-items: center; gap: var(--space-2); min-height: var(--tap-min); padding: 0 var(--space-3); border: var(--border-thin) solid var(--color-border-control); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font: 700 15px/1 var(--font-sans); cursor: pointer; }
+.ui-side-items { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.ui-navlink { display: flex; align-items: center; gap: var(--space-2); color: var(--color-text); text-decoration: none; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); font-weight: 600; min-height: var(--tap-min); }
+.ui-navlink:hover { background: var(--color-surface-sunken); }
+.ui-navlink[aria-current="page"] { background: var(--color-surface-sunken); font-weight: 800; box-shadow: inset 2px 0 0 var(--color-primary); }
+.ui-navlink-icon { display: inline-flex; color: var(--color-text-muted); }
+.ui-navlink[aria-current="page"] .ui-navlink-icon { color: var(--color-text); }
+.ui-side-footer { margin-top: auto; padding: var(--space-4) var(--space-3) 0; border-top: var(--border-thin) solid var(--color-border); display: flex; flex-direction: column; gap: var(--space-2); align-items: flex-start; color: var(--color-text-muted); font-size: 14px; }
+.ui-shell :focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-offset); }
+
+@media (max-width: 760px) {
+  .ui-shell { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; align-content: start; }
+  .ui-side { position: sticky; top: 0; z-index: var(--z-sticky); padding: var(--space-2) var(--space-3); border-inline-end: 0; border-bottom: var(--border-thin) solid var(--color-border); }
+  .ui-side-brand { padding: 0; }
+  .ui-side-toggle { display: inline-flex; }
+  .ui-side-items { display: none; }
+  .ui-side[data-open] .ui-side-items { display: flex; max-height: calc(100dvh - 64px); overflow-y: auto; overscroll-behavior: contain; padding-block: var(--space-2) var(--space-3); }
+  /* Menu open: alleen het menu schuift, niet de pagina erachter. */
+  html[data-nav-open], html[data-nav-open] body { overflow: hidden; overscroll-behavior: none; }
+  .ui-main { padding: var(--space-5) var(--space-4); gap: var(--space-5); }
+  .ui-table th, .ui-table td { padding-inline: var(--space-2); }
+}
+
+/* ---------- StatCard ---------- */
+.ui-stat { background: var(--color-surface); border: var(--border-thin) solid var(--color-border); border-radius: var(--radius-card); padding: var(--space-4); min-width: 0; }
+.ui-stat-label { display: block; font-size: 14px; color: var(--color-text-muted); }
+.ui-stat strong { display: block; font: 800 28px/1.1 var(--font-sans); font-variant-numeric: tabular-nums; margin-top: var(--space-1); }
+.ui-stat-delta { display: flex; flex-wrap: wrap; gap: 0 6px; align-items: baseline; margin: var(--space-1) 0 0; font-size: 13px; font-weight: 600; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.ui-stat-delta[data-dir="good"] { color: var(--color-success); }
+.ui-stat-delta[data-dir="bad"] { color: var(--color-danger); }
+.ui-stat-delta span { color: var(--color-text-muted); font-weight: 400; }
+.ui-stat-note { margin: var(--space-1) 0 0; font-size: 12px; color: var(--color-text-muted); }
+
+/* ---------- TimeChart ---------- */
+.ui-chart { position: relative; display: grid; gap: var(--space-3); margin: 0; }
+.ui-chart-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
+.ui-chart-head h3 { margin: 0; font: 700 15px/1.3 var(--font-sans); }
+.ui-chart-box { position: relative; }
+.ui-chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.ui-chart svg text { font: 400 11px var(--font-sans); fill: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.ui-chart .ui-chart-grid { stroke: var(--chart-grid); stroke-width: 1; }
+.ui-chart .ui-chart-axis { stroke: var(--color-border-control); stroke-width: 1; }
+.ui-chart .ui-chart-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.ui-chart .ui-chart-line[data-dash="dash"] { stroke-dasharray: 6 4; }
+.ui-chart .ui-chart-line[data-dash="dot"] { stroke-dasharray: 1.5 4.5; }
+.ui-chart .ui-chart-area { opacity: .1; }
+.ui-chart .ui-chart-bar[data-dim] { opacity: .55; }
+.ui-chart .ui-chart-dot { stroke: var(--color-surface); stroke-width: 2; }
+.ui-chart .ui-chart-cross { stroke: var(--color-border-control); stroke-width: 1; }
+.ui-chart-tip { position: absolute; top: var(--space-2); pointer-events: none; min-width: 140px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: var(--color-surface); border: var(--border-thin) solid var(--color-border); box-shadow: var(--shadow-raised); font-size: 13px; display: grid; gap: 2px; z-index: var(--z-raised); }
+.ui-chart-tip span { display: flex; justify-content: space-between; gap: var(--space-3); font-variant-numeric: tabular-nums; }
+.ui-chart-table summary { cursor: pointer; color: var(--color-text-muted); }
+.ui-chart-table .ui-table { margin-top: var(--space-2); }
+.ui-legend { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin: 0; padding: 0; list-style: none; font-size: 13px; color: var(--color-text); }
+.ui-legend li { display: inline-flex; align-items: center; gap: var(--space-2); }
+.ui-legend i { width: 14px; height: 3px; border-radius: 2px; background: var(--sw); }
+.ui-legend i[data-shape="bar"] { width: 10px; height: 10px; border-radius: 3px; }
+.ui-legend i[data-dash="dash"] { background: repeating-linear-gradient(90deg, var(--sw) 0 5px, transparent 5px 8px); }
+.ui-legend i[data-dash="dot"] { background: repeating-linear-gradient(90deg, var(--sw) 0 2px, transparent 2px 5px); }
+
+/* ---------- BarList ---------- */
+.ui-barlist { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.ui-barlist li { display: grid; grid-template-columns: minmax(96px, 1fr) minmax(80px, 2fr) auto; align-items: center; gap: var(--space-3); font-size: 14px; }
+.ui-barlist-label { overflow-wrap: anywhere; }
+.ui-barlist-track { background: var(--chart-grid); border-radius: 0 4px 4px 0; }
+.ui-barlist-bar { display: block; height: 10px; border-radius: 0 4px 4px 0; background: var(--sw, var(--chart-1)); min-width: 2px; }
+.ui-barlist-value { font-variant-numeric: tabular-nums; color: var(--color-text); text-align: end; min-width: 4ch; }
+.ui-barlist-value small { color: var(--color-text-muted); font-size: 12px; margin-inline-start: var(--space-1); }
+
+/* ---------- ActivityHeatmap ---------- */
+.ui-heatmap { inline-size: 100%; border-collapse: separate; border-spacing: 2px; table-layout: fixed; font-size: 12px; }
+.ui-heatmap th { font-weight: 600; color: var(--color-text-muted); text-align: start; padding: 0 var(--space-1); white-space: nowrap; }
+.ui-heatmap thead th { text-align: center; padding: 0; font-variant-numeric: tabular-nums; }
+.ui-heatmap thead th:first-child, .ui-heatmap tbody th { inline-size: 3ch; }
+.ui-heatmap td { block-size: var(--space-5); border-radius: var(--radius-xs); background: color-mix(in srgb, var(--chart-1) calc(var(--heat, 0) * 100%), var(--chart-grid)); }
+.ui-heatmap td[data-zero] { background: var(--chart-grid); }
+.ui-heatmap-legend { display: flex; align-items: center; gap: var(--space-2); margin-block-start: var(--space-2); font-size: 12px; color: var(--color-text-muted); }
+.ui-heatmap-legend i { display: inline-block; inline-size: var(--space-4); block-size: var(--space-3); border-radius: var(--radius-xs); background: color-mix(in srgb, var(--chart-1) calc(var(--heat, 0) * 100%), var(--chart-grid)); }
+@media (max-width: 760px) { .ui-heatmap thead th:nth-child(odd):not(:first-child) { color: transparent; } }

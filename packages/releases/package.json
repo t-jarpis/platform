@@ -1,0 +1,58 @@
+{
+  "name": "@t-jarpis/releases",
+  "version": "0.0.0",
+  "description": "Releasenotes per omgeving: de draaiende versie vastleggen bij het opstarten, met de commits sinds de vorige en de trailer Release-note.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./log": {
+      "types": "./dist/log.d.ts",
+      "default": "./dist/log.js"
+    }
+  },
+  "bin": {
+    "release-log": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "migrations"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "db:generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "peerDependencies": {
+    "drizzle-orm": "^0.45.4"
+  },
+  "peerDependenciesMeta": {
+    "drizzle-orm": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.15",
+    "@t-jarpis/config": "workspace:*",
+    "@types/node": "^22.20.5",
+    "drizzle-kit": "^0.31.11",
+    "drizzle-orm": "^0.45.4"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/t-jarpis/platform.git",
+    "directory": "packages/releases"
+  }
+}

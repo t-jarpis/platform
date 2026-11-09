@@ -1,0 +1,47 @@
+{
+  "name": "@t-jarpis/admin-ui",
+  "version": "0.0.0",
+  "description": "React-componenten en stijl voor admin panels: grafieken, ranglijsten, kerncijfers, weekdag × uur, layout en zijmenu. Leest alleen CSS-variabelen van de site.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./admin.css": "./admin.css"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "admin.css"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "react": ">=19"
+  },
+  "devDependencies": {
+    "@t-jarpis/config": "workspace:*",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/t-jarpis/platform.git",
+    "directory": "packages/admin-ui"
+  }
+}
