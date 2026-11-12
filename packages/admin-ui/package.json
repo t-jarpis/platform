@@ -1,6 +1,6 @@
 {
   "name": "@t-jarpis/admin-ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "React-componenten en stijl voor admin panels: grafieken, ranglijsten, kerncijfers, weekdag × uur, layout en zijmenu. Leest alleen CSS-variabelen van de site.",
   "type": "module",
   "main": "./dist/index.js",

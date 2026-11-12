@@ -43,6 +43,12 @@ describe("StatCard", () => {
     expect(html(<StatCard label="Bezoekers" value={120} before={100} period="vorige week" />)).toContain('data-dir="good"><b>▲ +20%</b><span> t.o.v. vorige week</span>');
     expect(html(<StatCard label="Fouten" value={120} before={100} upIsGood={false} />)).toContain('data-dir="bad"');
     expect(html(<StatCard label="Nieuw" value={5} before={0} />)).toContain("nieuw");
+  });
+  it("tekent een sparkline vanaf twee punten", () => {
+    expect(html(<StatCard label="Bezoekers" value={10} trend={[2, 8]} />)).toContain('class="ui-stat-spark"');
+    expect(html(<StatCard label="Bezoekers" value={10} trend={[2, 8]} />)).toContain('aria-label="Per periode: van 2 naar 8, hoogste 8"');
+    expect(html(<StatCard label="Bezoekers" value={10} trend={[2]} />)).not.toContain("ui-stat-spark");
+    expect(html(<StatCard label="Leeg" value={0} trend={[0, 0]} />)).toContain('d="M0.0 36.0 L100.0 36.0"');
     expect(html(<StatCard label="Zonder" value={12345} />)).toContain("12,3K");
   });
 });

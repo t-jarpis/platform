@@ -1,5 +1,11 @@
 # @t-jarpis/admin-ui
 
+## 0.2.0
+
+### Minor Changes
+
+- `StatCard` krijgt een optionele `trend` (reeks per dag of week); vanaf twee punten staat er een sparkline onder de vergelijking, zoals in het Kleurhoek-dashboard. Nieuw export `Sparkline`; stijl `ui-stat-spark` in `admin.css`.
+
 ## 0.1.0
 
 ### Minor Changes
