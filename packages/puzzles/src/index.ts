@@ -40,3 +40,26 @@ export {
   isValidBinary, solveBinary, validateBinaryEntry,
 } from "./binary.js";
 export type { BinaryCell, BinaryEntryCheck, BinaryGrade, BinaryOptions, BinaryPuzzle, BinarySize, BinaryTechnique, BinaryValue } from "./binary.js";
+
+export { permutations, randomLatinSquare } from "./latin.js";
+
+export { countInequalitySolutions, generateInequality, INEQUALITY_LEVELS, inequalityConflicts } from "./inequality.js";
+export type { InequalityOptions, InequalityPuzzle, InequalitySign } from "./inequality.js";
+export { countTowersSolutions, generateTowers, TOWERS_LEVELS, visibleTowers } from "./towers.js";
+export type { TowersOptions, TowersPuzzle } from "./towers.js";
+export { countFleetSolutions, FLEET_LEVELS, generateFleet } from "./fleet.js";
+export type { FleetOptions, FleetPuzzle } from "./fleet.js";
+export { BRIDGES_LEVELS, bridgeCandidates, countBridgesSolutions, generateBridges } from "./bridges.js";
+export type { Bridge, BridgeIsland, BridgesOptions, BridgesPuzzle } from "./bridges.js";
+export { countSnakeSolutions, generateSnake, SNAKE_LEVELS } from "./snake.js";
+export type { SnakeOptions, SnakePuzzle } from "./snake.js";
+export { generateLights, LIGHTS_LEVELS, pressLight } from "./lights.js";
+export type { LightsOptions, LightsPuzzle } from "./lights.js";
+export { countIslandsSolutions, generateIslands, ISLANDS_LEVELS, islandsValid } from "./islands.js";
+export type { IslandsOptions, IslandsPuzzle } from "./islands.js";
+export { countCrossSumsSolutions, CROSS_SUMS_LEVELS, generateCrossSums } from "./crosssums.js";
+export type { CrossSumsBlock, CrossSumsOptions, CrossSumsPuzzle } from "./crosssums.js";
+export {
+  COLOR_CODE_LEVELS, generateColorCode, generateHanoi, generatePairs, generateSlide, HANOI_LEVELS, isSlideSolved, PAIRS_LEVELS, scoreColorGuess, SLIDE_LEVELS, slideNeighbours,
+} from "./classics.js";
+export type { ColorCodePuzzle, HanoiPuzzle, PairsPuzzle, SlidePuzzle } from "./classics.js";

@@ -1,5 +1,11 @@
 # @t-jarpis/puzzles
 
+## 0.2.0
+
+### Minor Changes
+
+- Twaalf nieuwe spellen met eigen generator (en waar nodig een oplosser die één oplossing garandeert): kruissommen, groter-kleiner, torenpuzzel, zeeslagpuzzel, bruggen bouwen, getallenslang, lampjespuzzel, zee en eilanden, schuifpuzzel, torens van Hanoi, kleurcode raden en paren zoeken.
+
 ## 0.1.0
 
 ### Minor Changes

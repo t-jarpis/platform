@@ -1,7 +1,7 @@
 {
   "name": "@t-jarpis/puzzles",
-  "version": "0.1.0",
-  "description": "Puzzelgeneratoren en -oplossers voor de server (sudoku, doolhof, woordzoeker, speurpuzzel, rekenpuzzels, nonogram, binaire puzzel), deterministisch vanuit een seed.",
+  "version": "0.2.0",
+  "description": "Puzzelgeneratoren en -oplossers voor de server (sudoku, doolhof, woordzoeker, speurpuzzel, rekenpuzzels, nonogram, binaire puzzel, kruissommen, groter-kleiner, torenpuzzel, zeeslag, bruggen, getallenslang, lampjes, zee en eilanden, schuifpuzzel, hanoi, kleurcode, paren), deterministisch vanuit een seed.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

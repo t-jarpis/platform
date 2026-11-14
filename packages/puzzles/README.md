@@ -243,3 +243,23 @@ Regels: nooit meer dan twee gelijke naast of onder elkaar, evenveel nullen als e
 | `large-print` | 8×8 | zoals `starter` | ongeveer de helft |
 
 Een onafhankelijke teller (backtracking met logica) controleert dat er precies één oplossing is. Snelheid: 10×10 expert ≈ 10–30 ms, 14×14 expert ≈ 40 ms.
+
+## Logica, paden en klassiekers (0.2.0)
+Allemaal deterministisch uit `{ seed, level }` met de gedeelde niveaus, en (waar het om een unieke oplossing gaat) gecontroleerd met een eigen oplosser: precies één oplossing. Namen zijn eigen Nederlandse namen; de regels zelf zijn vrij, merknamen van anderen gebruiken we niet.
+
+| Functie | Spel | Niveaus (starter · groot · gevorderd · expert) |
+|---|---|---|
+| `generateCrossSums` | Kruissommen: reeksen optellen tot de som ervoor, geen dubbel cijfer in een reeks | 5×5 (cijfers 1–6) · 5×5 · 7×7 · 9×9; reeksen hoogstens 4 (expert 5). Is het zonder hulp niet eenduidig, dan staat er een enkel cijfer op een plek waar een andere oplossing zou verschillen. |
+| `generateInequality` | Groter-kleiner: Latijns vierkant met `<` en `>` tussen vakjes | 4 · 4 · 5 · 6; makkelijk met meer tekens en een paar cijfers |
+| `generateTowers` | Torenpuzzel: hoogtes 1..n, randgetallen = zichtbare torens | 4 · 4 · 5 · 6 |
+| `generateFleet` | Zeeslagpuzzel: vloot verstoppen met tellingen per rij en kolom | 6×6 · 6×6 · 8×8 · 10×10 |
+| `generateBridges` | Bruggen bouwen: eilanden verbinden, één of twee bruggen, niet kruisen, alles samen | 7×7 (8) · 7×7 (9) · 9×9 (14) · 11×11 (20 eilanden) |
+| `generateSnake` | Getallenslang: 1..n² recht naast elkaar; 1 staat er altijd | 5 · 5 · 6 · 7 |
+| `generateLights` | Lampjespuzzel: tik wisselt een lampje en zijn buren; alles uit | 3 · 4 · 5 · 6, uit 2 · 3 · 6 · 10 tikken (altijd oplosbaar) |
+| `generateIslands` | Zee en eilanden: eilanden zo groot als hun getal, zee samen, geen 2×2 zee | 5 · 5 · 6 · 7 |
+| `generateSlide` | Schuifpuzzel | 3×3 · 3×3 · 4×4 · 4×4, gehusseld met 12 · 20 · 40 · 120 schuifjes |
+| `generateHanoi` | Torens van Hanoi, met de kortste oplossing | 3 · 3 · 4 · 6 schijven; de seed kiest de doelstok |
+| `generateColorCode` + `scoreColorGuess` | Kleurcode raden | 4 kleuren/3 · 5/3 · 6/4 · 6/4 met herhaling |
+| `generatePairs` | Paren zoeken: alleen nummers; de tekeningen zijn van de site | 4×3 · 4×3 · 5×4 · 6×5 |
+
+De oplossers (`count…Solutions`) zijn ook te gebruiken om een eigen puzzel te controleren. Sommige hebben een rekenbudget en geven dan `null`.
